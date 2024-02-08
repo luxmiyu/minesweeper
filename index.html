@@ -15,17 +15,19 @@
     <link rel="icon" type="image/jpg" href="https://cdn.glitch.global/e5143343-dba7-4602-8cff-d021bb699e44/suiseihat.jpg" />
 
     <!-- metadata -->
-    <title>luxmiyu web template</title>
-    <meta name="description" content="A clean and simple, light-weight mobile-first web template used in my own projects.">
-    <meta name="keywords" content="luxmiyu, lux, miyu, dev">
+    <title>minesweeper</title>
+    <meta name="description" content="A classic simple puzzle game.">
+    <meta name="keywords" content="luxmiyu, lux, miyu, dev, minesweeper, game">
     <meta name="author" content="luxmiyu">
-    <link rel="canonical" href="https://luxmiyu.com/template" />
+    <link rel="canonical" href="https://luxmiyu.com/minesweeper" />
 
     <!-- social media metadata -->
-    <meta property="og:title" content="luxmiyu web template" />
-    <meta property="og:description" content="A clean and simple, light-weight mobile-first web template used in my own projects." />
-    <meta property="og:image" content="https://cdn.glitch.global/e5143343-dba7-4602-8cff-d021bb699e44/suiseihat.jpg" />
-    <meta property="og:url" content="https://luxmiyu.com/template" />
+    <meta property="og:title" content="minesweeper" />
+    <meta property="og:description" content="A classic simple puzzle game." />
+    <meta property="og:url" content="https://luxmiyu.com/minesweeper" />
+
+    <meta property="twitter:image" content="https://cdn.glitch.global/e5143343-dba7-4602-8cff-d021bb699e44/preview_minesweeper.png?v=1707412977016" />
+    <meta property="twitter:card" content="summary_large_image" />
     
     <!-- google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,22 +38,20 @@
   </head>
   <body>
     <div class="container">
-      <img class="pfp" src="https://cdn.glitch.global/e5143343-dba7-4602-8cff-d021bb699e44/suiseihat.jpg" alt="luxmiyu's profile picture">
-      <h1>luxmiyu</h1>
-      <p class="subtitle">a generic web template</p>
-
-      <p>
-        A clean and simple, light-weight mobile-first web template used in my own projects.
-        Using <a href="https://en.wikipedia.org/wiki/HTML" target="_blank">HTML</a>,
-        <a href="https://sass-lang.com/" target="_blank">Sass</a> and
-        <a href="https://www.typescriptlang.org/" target="_blank">TypeScript</a>,
-        and built with <a href="https://vitejs.dev/">Vite</a>.
-      </p>
+      <h1>minesweeper</h1>
+      <p class="subtitle">a classic simple puzzle game</p>
       
-      <a id="counter" class="button">
-        <img class="icon" src="https://cdn.glitch.global/e5143343-dba7-4602-8cff-d021bb699e44/suiseihat.jpg?v=1677173567603" alt="luxmiyu icon">
-        <p id="counter-label" class="label">a button with an icon</p>
-      </a>
+      <div id="board"></div>
+
+      <p id="timer"></p>
+
+      <div id="under">
+        <select name="difficulty" id="difficulty"></select>
+        <p id="flags" class="subtitle"></p>
+        <button id="reset">Reset</button>
+      </div>
+
+      <p class="subtitle">LMB: reveal, RMB: flag, 1-5: difficulty, R: reset.</p>
 
       <footer><a href="https://luxmiyu.com">by luxmiyu</a> | <a id="theme-toggle">switch to light theme</a></footer>
     </div>

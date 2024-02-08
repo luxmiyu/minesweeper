@@ -26,6 +26,25 @@ const colors: Color[] = [
   { dark: '3a3a3a', light: 'aaaaaa', name: 'range-border' },
   { dark: '3a3a3a', light: 'aaaaaa', name: 'range-background' },
   { dark: 'e26f80', light: 'f4899d', name: 'checkbox-background' },
+
+  { dark: '6dacff', light: '6dacff', name: 'timer' },
+  
+  { dark: 'bababa', light: 'bebebe', name: 'cell' },
+  { dark: 'bababa', light: 'bebebe', name: 'mine' },
+  { dark: 'bababa', light: 'bebebe', name: 'flag' },
+  { dark: '3a3a3a', light: 'dddddd', name: 'reveal' },
+  { dark: 'cd435c', light: 'e86880', name: 'explosion' },
+  { dark: '3a3a3a', light: 'dddddd', name: 'wrong' },
+  { dark: '5cd778', light: '5cd778', name: 'right' },
+
+  { dark: '6dacff', light: '0012f4', name: 'one' },
+  { dark: '44a159', light: '007c1b', name: 'two' },
+  { dark: 'f7574a', light: 'ff1e0e', name: 'three' },
+  { dark: '7765c2', light: '00057c', name: 'four' },
+  { dark: 'aa5e5c', light: '850a05', name: 'five' },
+  { dark: '54aeac', light: '00807f', name: 'six' },
+  { dark: '707070', light: '000000', name: 'seven' },
+  { dark: 'cacaca', light: '808080', name: 'eight' },
 ]
 
 const buttonThemeToggle = document.getElementById('theme-toggle')
