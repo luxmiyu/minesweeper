@@ -173,6 +173,8 @@ export default class Board {
         this.element.appendChild(cell.element)
       }
     }
+
+    this.updateFlagDisplay()
   }
 
   public isOutOfBounds(x: number, y: number): boolean {
@@ -275,7 +277,7 @@ export default class Board {
         const neighbors = this.getAllNeighbors(x, y)
 
         neighbors.forEach(neighbor => {
-          if (!neighbor.flagged) {
+          if (!neighbor.flagged && this.getAllFlags().length < this.totalMines) {
             neighbor.flag()
           }
         })
@@ -312,6 +314,8 @@ export default class Board {
     }
 
     if (this.status !== 'ongoing') return
+    if (this.isOutOfBounds(x, y)) return
+    if (this.getAllFlags().length >= this.totalMines && !this.getCell(x, y).flagged) return
 
     const cell = this.getCell(x, y)
 
