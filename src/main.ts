@@ -72,6 +72,10 @@ difficultySelect.addEventListener('change', () => {
   const difficulty = difficulties.find(difficulty => difficulty.name === difficultySelect.value)
   if (difficulty) {
     board.initialize(difficulty)
+
+    // reset flagmode button
+    toggleFlagmode()
+    toggleFlagmode()
   }
 })
 
