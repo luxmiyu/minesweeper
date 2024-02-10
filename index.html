@@ -26,7 +26,7 @@
     <meta property="og:description" content="A classic simple puzzle game." />
     <meta property="og:url" content="https://luxmiyu.com/minesweeper" />
 
-    <meta property="twitter:image" content="https://cdn.glitch.global/e5143343-dba7-4602-8cff-d021bb699e44/preview_minesweeper.png?v=1707412977016" />
+    <meta property="twitter:image" content="https://cdn.glitch.global/e5143343-dba7-4602-8cff-d021bb699e44/preview_minesweeper.png?v=1707573320237" />
     <meta property="twitter:card" content="summary_large_image" />
     
     <!-- google fonts -->
@@ -41,17 +41,21 @@
       <h1>minesweeper</h1>
       <p class="subtitle">a classic simple puzzle game</p>
       
-      <div id="board"></div>
+      <div id="board-container">
+        <div id="board"></div>
+      </div>
 
-      <p id="timer"></p>
+      <button id="flagmode" data-flagmode="false">FLAG MODE OFF</button>
+
+      <p id="timer">0:00.000</p>
 
       <div id="under">
         <select name="difficulty" id="difficulty"></select>
-        <p id="flags" class="subtitle"></p>
+        <p id="flags" class="subtitle">0 / 10 flags</p>
         <button id="reset">Reset</button>
       </div>
 
-      <p class="subtitle">LMB: reveal, RMB: flag, 1-5: difficulty, R: reset.</p>
+      <p class="subtitle">[F] Flag Mode | [R] Reset Board | [1-7] Difficulty | [LMB/RMB] Reveal / Flag</p>
 
       <footer><a href="https://luxmiyu.com">by luxmiyu</a> | <a id="theme-toggle">switch to light theme</a></footer>
     </div>

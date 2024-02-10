@@ -36,6 +36,7 @@ const colors: Color[] = [
   { dark: 'cd435c', light: 'e86880', name: 'explosion' },
   { dark: '3a3a3a', light: 'dddddd', name: 'wrong' },
   { dark: '5cd778', light: '5cd778', name: 'right' },
+  { dark: '75a6e5', light: '6dacff', name: 'flagmode' },
 
   { dark: '6dacff', light: '0012f4', name: 'one' },
   { dark: '44a159', light: '007c1b', name: 'two' },

@@ -1,95 +1,124 @@
 body
   .container
-    #board
-      position: relative
+    #board-container
+      display: grid
+      place-items: center
 
       width: 100%
       max-width: 70dvh
       aspect-ratio: 1 / 1
 
-      display: grid
-      place-items: center
-      grid-template-columns: repeat(16, 1fr)
-      grid-template-rows: repeat(16, 1fr)
+      overflow: hidden
 
-      background: var(--color-background)
-
-      gap: 1px
-
-      container-type: inline-size
-      font-size: 2cqb
-      font-weight: 500
-
-      user-select: none
-
-      .cell
-        display: grid
-        place-items: center
+      #board
+        position: relative
 
         width: 100%
         height: 100%
 
-        background: var(--color-cell)
-        border-radius: 1px
+        display: grid
+        place-items: center
+        grid-template-columns: repeat(16, 1fr)
+        grid-template-rows: repeat(16, 1fr)
 
-        cursor: pointer
+        background: var(--color-background)
 
-        overflow: hidden
+        gap: 1px
 
-        padding-top: 3px
+        container-type: inline-size
+        font-size: 2cqb
+        font-weight: 500
 
-        &.reveal
-          background: var(--color-reveal)
-          cursor: default
+        user-select: none
 
-        &.flag
-          background: var(--color-flag)
-          color: var(--color-cell)
+        .cell
+          display: grid
+          place-items: center
 
-        &.mine
-          background: var(--color-mine)
-          color: var(--color-reveal)
+          width: 100%
+          height: 100%
 
-        &.explosion
-          background: var(--color-explosion)
+          background: var(--color-cell)
+          border-radius: 1px
 
-        &.wrong
-          background: var(--color-wrong)
-
-        &.right
-          background: var(--color-right)
-
-        &.one
-          color: var(--color-one)
           cursor: pointer
 
-        &.two
-          color: var(--color-two)
-          cursor: pointer
+          overflow: hidden
 
-        &.three
-          color: var(--color-three)
-          cursor: pointer
+          padding-top: 2px
 
-        &.four
-          color: var(--color-four)
-          cursor: pointer
+          &.revealed
+            background: var(--color-reveal)
+            cursor: default
 
-        &.five
-          color: var(--color-five)
-          cursor: pointer
+          &.flagged
+            background: var(--color-flag)
 
-        &.six
-          color: var(--color-six)
-          cursor: pointer
+          &.mine
+            background: var(--color-mine)
 
-        &.seven
-          color: var(--color-seven)
-          cursor: pointer
+          &.explosion
+            background: var(--color-explosion)
 
-        &.eight
-          color: var(--color-eight)
-          cursor: pointer
+          &.wrong
+            background: var(--color-wrong)
+
+          &.right
+            background: var(--color-right)
+
+          &.one
+            color: var(--color-one)
+            cursor: pointer
+
+          &.two
+            color: var(--color-two)
+            cursor: pointer
+
+          &.three
+            color: var(--color-three)
+            cursor: pointer
+
+          &.four
+            color: var(--color-four)
+            cursor: pointer
+
+          &.five
+            color: var(--color-five)
+            cursor: pointer
+
+          &.six
+            color: var(--color-six)
+            cursor: pointer
+
+          &.seven
+            color: var(--color-seven)
+            cursor: pointer
+
+          &.eight
+            color: var(--color-eight)
+            cursor: pointer
+
+    #flagmode
+      display: grid
+      place-items: center
+
+      width: 100%
+      max-width: 70dvh
+      height: 50px
+
+      margin-top: -8px
+
+      font-size: 1rem
+      font-weight: 500
+
+      &.on
+        background: var(--color-flagmode)
+
+      &.win
+        background: var(--color-right)
+
+      &.lose
+        background: var(--color-explosion)
 
     #timer
       display: grid

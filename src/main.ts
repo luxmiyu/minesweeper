@@ -3,81 +3,95 @@ import './common.sass'
 import './style.sass'
 import './theme.ts'
 
-import Board from './Board'
+import Board from './classes/Board'
+import Difficulty from './classes/Difficulty'
 
+const flagmode = document.getElementById('flagmode') as HTMLButtonElement
 const difficultySelect = document.getElementById('difficulty') as HTMLSelectElement
 const resetButton = document.getElementById('reset') as HTMLButtonElement
+// const boardContainer = document.getElementById('board-container') as HTMLDivElement
+const boardDisplay = document.getElementById('board') as HTMLDivElement
 
-type Difficulty = {
-  size: number
-  mines: number
-  clear: number
-}
-
-type DifficultyOption = {
-  name: string
-  difficulty: Difficulty
-}
-
-function diff(size: number, mines: number, clear: number): Difficulty {
-  return { size, mines, clear }
-}
-
-const difficultyOptions: DifficultyOption[] = [
-  { difficulty: diff( 9,  10, 2), name: 'easy' },
-  { difficulty: diff(12,  24, 2), name: 'normal' },
-  { difficulty: diff(16,  48, 2), name: 'hard' },
-  { difficulty: diff(24,  99, 2), name: 'expert' },
-  { difficulty: diff(32, 200, 3), name: 'extreme' },
+const difficulties: Difficulty[] = [
+  new Difficulty('easy',     9,  10, 1),
+  new Difficulty('normal',  11,  20, 1),
+  new Difficulty('hard',    15,  40, 2),
+  new Difficulty('insane',  23, 100, 2),
+  new Difficulty('expert',  33, 210, 2),
+  new Difficulty('master',  45, 420, 3),
+  new Difficulty('extreme', 59, 727, 3),
+  new Difficulty('suicide', 99, 2048, 3),
 ]
 
-difficultyOptions.forEach(option => {
+difficulties.forEach(difficulty => {
   let element = document.createElement('option')
-  element.value = option.name
-  element.innerHTML = `${option.name.charAt(0).toLocaleUpperCase()}${option.name.slice(1)} (${option.difficulty.mines} mines)`
+  element.value = difficulty.name
+  element.innerHTML = difficulty.toString()
   difficultySelect.appendChild(element)
 })
 
-const board = new Board(difficultyOptions[0].difficulty)
-board.create()
+const board = new Board(boardDisplay, difficulties[0])
+
+// ----------------------------------------------------- Event Listeners -----------------------------------------------------
+
+function resetBoard() {
+  board.initialize()
+
+  // reset flagmode button
+  toggleFlagmode()
+  toggleFlagmode()
+}
+
+function flagmodeOn() {
+  flagmode.classList.remove('win', 'lose')
+
+  flagmode.innerHTML = 'FLAG MODE ON'
+  flagmode.classList.add('on')
+  flagmode.dataset.flagmode = 'true'
+}
+
+function flagmodeOff() {
+  flagmode.classList.remove('win', 'lose')
+
+  flagmode.innerHTML = 'FLAG MODE OFF'
+  flagmode.classList.remove('on')
+  flagmode.dataset.flagmode = 'false'
+}
+
+function toggleFlagmode() {
+  if (board.status === 'won' || board.status === 'lost') return
+
+  if (flagmode.dataset.flagmode === 'true') {
+    flagmodeOff()
+  } else {
+    flagmodeOn()
+  }
+}
 
 difficultySelect.addEventListener('change', () => {
-  const selected = difficultyOptions.find(option => option.name === difficultySelect.value)
-
-  if (selected) {
-    board.changeDifficulty(selected.difficulty)
-    if (!board.playing) {
-      board.create()
-    }
+  const difficulty = difficulties.find(difficulty => difficulty.name === difficultySelect.value)
+  if (difficulty) {
+    board.initialize(difficulty)
   }
 })
 
-resetButton.addEventListener('click', () => {
-  board.reset()
-  board.create()
-  difficultySelect.disabled = false
-})
+flagmode.addEventListener('click', toggleFlagmode)
+resetButton.addEventListener('click', resetBoard)
 
 document.addEventListener('keydown', (event) => {
-  if (event.code === 'KeyR') {
-    board.reset()
-    board.create()
-    difficultySelect.disabled = false
+  if (event.code === 'KeyF') {
+    toggleFlagmode()
   }
 
-  // if (event.code === 'KeyC') {
-  //   board.cheat()
-  // }
+  if (event.code === 'KeyR') {
+    resetBoard()
+  }
 
-  // on pressing a number key, change the difficulty
-  if (event.code.startsWith('Digit')) {
-    if (board.startTime !== null) return
-
-    let index = parseInt(event.code.slice(-1)) - 1
-
-    if (index < difficultyOptions.length && index >= 0) {
-      difficultySelect.value = difficultyOptions[index].name
-      difficultySelect.dispatchEvent(new Event('change'))
+  if (event.code.startsWith('Digit') && event.code.length === 6) {
+    const index = parseInt(event.code[5]) - 1
+    if (index >= 0 && index < difficulties.length) {
+      difficultySelect.value = difficulties[index].name
+      board.initialize(difficulties[index])
     }
   }
 })
