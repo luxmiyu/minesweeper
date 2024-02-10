@@ -32,6 +32,7 @@ export default class Board {
 
   private startTime: number | null
   private endTime: number | null
+  private lastTime: string
   
   public status: Status
 
@@ -43,6 +44,7 @@ export default class Board {
 
     this.startTime = null
     this.endTime = null
+    this.lastTime = ''
 
     this.status = 'waiting'
 
@@ -57,15 +59,22 @@ export default class Board {
   public get clearDistance(): number { return this.difficulty.clear }
 
   private updateTimer(): void {
+    let newTime = ''
+
     if (this.status === 'ongoing') {
       const now = Date.now()
       const elapsed = now - (this.startTime || now)
 
-      timerDisplay.innerHTML = formatTime(elapsed)
+      newTime = formatTime(elapsed)
     } else if (this.status === 'waiting') {
-      timerDisplay.innerHTML = formatTime(0)
+      newTime = formatTime(0)
     } else {
-      timerDisplay.innerHTML = formatTime(this.endTime! - this.startTime!)
+      newTime = formatTime(this.endTime! - this.startTime!)
+    }
+
+    if (newTime !== this.lastTime) {
+      this.lastTime = newTime
+      timerDisplay.innerText = newTime
     }
   }
 
@@ -229,7 +238,7 @@ export default class Board {
     this.updateTimer()
 
     flagmode.classList.add('win')
-    flagmode.innerText = 'CLEAR!'
+    flagmode.innerText = 'CLEAR'
   }
 
   private lose(x: number, y: number): void {
