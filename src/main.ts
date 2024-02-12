@@ -82,7 +82,7 @@ difficultySelect.addEventListener('change', () => {
 flagmode.addEventListener('click', toggleFlagmode)
 resetButton.addEventListener('click', resetBoard)
 
-document.addEventListener('keydown', (event) => {
+document.addEventListener('keydown', async (event) => {
   if (event.code === 'KeyF') {
     toggleFlagmode()
   }
@@ -96,6 +96,34 @@ document.addEventListener('keydown', (event) => {
     if (index >= 0 && index < difficulties.length) {
       difficultySelect.value = difficulties[index].name
       board.initialize(difficulties[index])
+
+      // reset flagmode button
+      toggleFlagmode()
+      toggleFlagmode()
+    }
+  }
+
+  if (event.code === 'KeyC') {
+    board.revealCenter()
+  }
+
+  if (event.code === 'KeyA') {
+    if (board.status === 'waiting' || board.status === 'ongoing') {
+      flagmode.innerHTML = 'ALGORITHM'
+      flagmode.classList.add('algorithm')
+
+      const smart = event.shiftKey
+      const cheat = event.altKey
+
+      if (smart) flagmode.innerHTML += ' (GUESSING)'
+      if (cheat) flagmode.innerHTML += ' (CHEATING)'
+
+      console.log('starting algorithm...')
+      await board.algorithmSolve(smart, cheat)
+
+      flagmode.classList.remove('algorithm')
+      toggleFlagmode()
+      toggleFlagmode()
     }
   }
 })

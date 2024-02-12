@@ -28,6 +28,7 @@ const colors: Color[] = [
   { dark: 'e26f80', light: 'f4899d', name: 'checkbox-background' },
 
   { dark: '6dacff', light: '6dacff', name: 'timer' },
+  { dark: 'eeb456', light: 'efbf73', name: 'algorithm' },
   
   { dark: 'bababa', light: 'bebebe', name: 'cell' },
   { dark: 'bababa', light: 'bebebe', name: 'mine' },

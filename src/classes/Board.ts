@@ -22,6 +22,10 @@ function formatTime(ms: number): string {
   return `${minutes}:${seconds.toString().padStart(2, '0')}.${(milliseconds).toString().padStart(3, '0')}`
 }
 
+async function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 type Status = 'waiting' | 'ongoing' | 'won' | 'lost'
 
 export default class Board {
@@ -36,6 +40,8 @@ export default class Board {
   
   public status: Status
 
+  private breakAlgorithm: boolean
+
   constructor(div: HTMLDivElement, difficulty: Difficulty) {
     this.difficulty = difficulty
 
@@ -48,6 +54,8 @@ export default class Board {
 
     this.status = 'waiting'
 
+    this.breakAlgorithm = true
+
     this.initialize()
 
     setInterval(this.updateTimer.bind(this), 10)
@@ -57,6 +65,39 @@ export default class Board {
   public get size(): number { return this.difficulty.size }
   public get totalMines(): number { return this.difficulty.mines }
   public get clearDistance(): number { return this.difficulty.clear }
+
+  public initialize(difficulty?: Difficulty): void {
+    if (difficulty) {
+      this.difficulty = difficulty
+    }
+
+    this.status = 'waiting'
+
+    this.element.innerHTML = ''
+
+    this.element.style.gridTemplateColumns = `repeat(${this.size}, 1fr)`
+    this.element.style.gridTemplateRows = `repeat(${this.size}, 1fr)`
+    this.element.style.fontSize = `${36 / this.size}cqb`
+    
+    this.cells = []
+
+    this.startTime = null
+    this.endTime = null
+
+    this.breakAlgorithm = true
+
+    for (let y = 0; y < this.size; y++) {
+      this.cells[y] = []
+
+      for (let x = 0; x < this.size; x++) {
+        const cell = new Cell(x, y, this.onReveal.bind(this), this.onFlag.bind(this))
+        this.cells[y][x] = cell
+        this.element.appendChild(cell.element)
+      }
+    }
+
+    this.updateFlagDisplay()
+  }
 
   private updateTimer(): void {
     let newTime = ''
@@ -155,37 +196,6 @@ export default class Board {
     return count
   }
 
-  public initialize(difficulty?: Difficulty): void {
-    if (difficulty) {
-      this.difficulty = difficulty
-    }
-
-    this.status = 'waiting'
-
-    this.element.innerHTML = ''
-
-    this.element.style.gridTemplateColumns = `repeat(${this.size}, 1fr)`
-    this.element.style.gridTemplateRows = `repeat(${this.size}, 1fr)`
-    this.element.style.fontSize = `${36 / this.size}cqb`
-    
-    this.cells = []
-
-    this.startTime = null
-    this.endTime = null
-
-    for (let y = 0; y < this.size; y++) {
-      this.cells[y] = []
-
-      for (let x = 0; x < this.size; x++) {
-        const cell = new Cell(x, y, this.onReveal.bind(this), this.onFlag.bind(this))
-        this.cells[y][x] = cell
-        this.element.appendChild(cell.element)
-      }
-    }
-
-    this.updateFlagDisplay()
-  }
-
   public isOutOfBounds(x: number, y: number): boolean {
     return x < 0 || y < 0 || x >= this.size || y >= this.size
   }
@@ -252,6 +262,95 @@ export default class Board {
 
     flagmode.classList.add('lose')
     flagmode.innerText = 'GAME OVER'
+  }
+
+  public revealCenter(): void {
+    const [centerX, centerY] = [Math.floor(this.size / 2), Math.floor(this.size / 2)]
+    this.onReveal(centerX, centerY)
+  }
+
+  public async algorithmStep(smart: boolean = false, cheat: boolean = false) {
+    // starting move
+    if (this.status === 'waiting') {
+      console.log('[ALGORITHM] starting move')
+      this.revealCenter()
+      return
+    }
+
+    const cells = this.getAllCells()
+    const filtered = cells.filter(cell => {
+      if (!cell.revealed) return false
+      if (cell.count === 0) return false
+
+      const numberUnrevealedUnflaggedNeighbors = this.countNeighbors(cell.x, cell.y, neighbor => !neighbor.revealed && !neighbor.flagged)
+      const numberFlaggedNeighbors = this.countNeighbors(cell.x, cell.y, neighbor => neighbor.flagged)
+      const numberUnrevealedNeighbors = this.countNeighbors(cell.x, cell.y, neighbor => !neighbor.revealed)
+      
+      const canSmartReveal = numberFlaggedNeighbors === cell.count && numberUnrevealedUnflaggedNeighbors > 0
+      const canSmartFlag = numberUnrevealedNeighbors === cell.count && numberFlaggedNeighbors < cell.count
+
+      return canSmartReveal || canSmartFlag
+    })
+
+    if (filtered.length > 0) {
+      console.log(`[ALGORITHM] trivial move, ${filtered.length} cells`)
+      for (let cell of filtered) {
+        this.onReveal(cell.x, cell.y)
+      }
+    } else if (smart || cheat) {
+      const unrevealedUnflagged = this.getAllUnrevealed().filter(cell => !cell.flagged)
+      const filtered = unrevealedUnflagged.filter(cell => {
+        if (cell.flagged) return false
+        if (cheat && cell.mine) return false
+        return this.countNeighbors(cell.x, cell.y, neighbor => neighbor.revealed) >= 1
+      })
+
+      console.log(`[ALGORITHM] ${cheat ? 'cheating' : 'guessing'} move, ${unrevealedUnflagged.length} cells remaining, ${filtered.length} cells filtered`)
+
+      const random = filtered[Math.floor(Math.random() * filtered.length)] ?? unrevealedUnflagged[Math.floor(Math.random() * unrevealedUnflagged.length)]
+      this.onReveal(random.x, random.y)
+    } else {
+      this.breakAlgorithm = true
+    }
+  }
+
+  public async algorithmSolve(smart: boolean = false, cheat: boolean = false) {
+    console.log(`[ALGORITHM] guess: ${smart}, cheat: ${cheat}`)
+
+    if (this.status === 'won' || this.status === 'lost') {
+      console.log('[ALGORITHM] game already over')
+      return
+    }
+
+    this.breakAlgorithm = false
+
+    while (this.status === 'waiting' || this.status === 'ongoing') {
+      if (this.breakAlgorithm) {
+        console.log('[ALGORITHM] breaking algorithm loop')
+        break
+      }
+
+      await this.algorithmStep(smart, cheat)
+      await sleep(10)
+    }
+
+    const newStatus = this.status as Status // status may have changed, don't narrow type
+
+    if (newStatus === 'won') {
+      console.log('[ALGORITHM] game won')
+    }
+
+    if (newStatus === 'lost') {
+      console.log('[ALGORITHM] game lost')
+    }
+
+    if (newStatus === 'waiting') {
+      console.log('[ALGORITHM] game waiting')
+    }
+
+    if (newStatus === 'ongoing') {
+      console.log('[ALGORITHM] game ongoing')
+    }
   }
 
   private onReveal(x: number, y: number): void {
