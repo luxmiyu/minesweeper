@@ -89,6 +89,8 @@ document.addEventListener('keydown', async (event) => {
 
   if (event.code === 'KeyR') {
     resetBoard()
+
+    if (event.shiftKey) board.revealCenter()
   }
 
   if (event.code.startsWith('Digit') && event.code.length === 6) {
@@ -115,8 +117,8 @@ document.addEventListener('keydown', async (event) => {
       const smart = event.shiftKey
       const cheat = event.altKey
 
-      if (smart) flagmode.innerHTML += ' (GUESSING)'
-      if (cheat) flagmode.innerHTML += ' (CHEATING)'
+      if (smart) flagmode.innerHTML = 'ALGORITHM (GUESSING)'
+      if (cheat) flagmode.innerHTML = 'ALGORITHM (CHEATING)'
 
       console.log('starting algorithm...')
       await board.algorithmSolve(smart, cheat)
